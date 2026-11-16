@@ -1,0 +1,22 @@
+# Abhängigkeiten und Build
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# Umgebung und Geheimnisse – niemals einchecken
+.env
+.env.*
+!.env.example
+
+# Vercel, Betriebssystem, Editor
+.vercel/
+.DS_Store
+*.log
+.idea/
+.vscode/
+
+# Echte Daten gehören nicht ins Repository
+/daten/
+/fotos/

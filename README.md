@@ -20,7 +20,7 @@ npm run dev                  # http://localhost:3000
 
 ## Datenbank
 
-Baserow. Tabelle „Weine“ nach [docs/DATENMODELL.md](docs/DATENMODELL.md) anlegen, einen Datenbank-Token erzeugen und Token sowie Tabellen-ID in `.env.local` eintragen.
+Baserow. Schritt für Schritt in [docs/EINRICHTEN.md](docs/EINRICHTEN.md); die Spalten beschreibt [docs/DATENMODELL.md](docs/DATENMODELL.md), eine Importvorlage liegt in `docs/weine-vorlage.csv`.
 
 ## Betrieb
 

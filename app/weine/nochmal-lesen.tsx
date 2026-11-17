@@ -18,7 +18,8 @@ const TEXT_GESCHEITERT = "Lesen hat nicht geklappt.";
 
 /**
  * Knopf „Noch einmal lesen“ für eine Karte im Stapel „Noch zu lesen“.
- * Steht im Kästchen der Karte; Satz und Knopf belegen dort je eine volle Zeile.
+ * Steht im Kästchen der Karte neben dem Verweis auf die Prüfkarte, nie darin;
+ * Satz und Knopf belegen dort je eine volle Zeile.
  */
 export function NochmalLesen({ kennung }: { kennung: string }) {
   const router = useRouter();

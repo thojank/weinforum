@@ -267,16 +267,16 @@ a.kachel:active,
   color: var(--grau);
 }
 
-.uebersicht .offen {
+.uebersicht .noch-zu-lesen {
   --farbe: var(--weinrot);
 }
 
-.uebersicht .unsicher {
-  --farbe: var(--herkunft-ki);
+.uebersicht .zu-pruefen {
+  --farbe: var(--herkunft-etikett);
 }
 
-.uebersicht .gelesen {
-  --farbe: var(--herkunft-etikett);
+.uebersicht .geprueft {
+  --farbe: var(--herkunft-bestaetigt);
 }
 
 /* Ein Abschnitt je Stapel; beim Sprung bleibt oben etwas Luft. */
@@ -298,15 +298,23 @@ a.kachel:active,
   gap: 0.6rem;
 }
 
+/* Oben der Verweis auf die Prüfkarte, darunter Meldung und „Noch einmal lesen“ je in voller Breite. */
 .stapel > li {
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.6rem 0.9rem;
+  grid-template-columns: 1fr;
+  gap: 0.6rem;
   align-items: center;
   padding: 0.8rem;
   background: var(--weiss);
   border: 1.5px solid var(--linie);
   border-radius: 0.75rem;
+}
+
+.stapel .verweis {
+  display: flex;
+  gap: 0.9rem;
+  align-items: center;
+  min-width: 0;
 }
 
 .stapel .fotos {
@@ -356,10 +364,88 @@ a.kachel:active,
   width: 100%;
 }
 
-/* Stapel „Mit Unsicherem“ und „Gelesen“: Zeilen der .weinliste */
+/* Stapel „Zu prüfen“, „Geprüft“ und „Ausgelistet“: Zeilen der .weinliste */
+.weinliste .verweis {
+  display: flex;
+  flex: 1;
+  gap: 0.75rem;
+  align-items: flex-start;
+  min-width: 0;
+  min-height: 2.75rem;
+}
+
 .weinliste .text {
   flex: 1;
   min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Verweis auf die Prüfkarte: ganze Zeile tippbar, rechts ein Pfeil. */
+a.verweis {
+  color: var(--tinte);
+  text-decoration: none;
+}
+
+.weinliste a.verweis::after {
+  content: "›";
+  align-self: center;
+  flex: none;
+  color: var(--grau);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+@media (hover: hover) {
+  a.verweis:hover strong {
+    text-decoration: underline;
+  }
+}
+
+/* Ausgelistet: eingeklappt unter den Stapeln, zählt nicht in der Übersicht */
+.ausgelistet summary {
+  display: flex;
+  align-items: center;
+  min-height: 2.75rem;
+  font-family: var(--schrift-titel);
+  font-weight: 700;
+  font-size: 1.15rem;
+  list-style: none;
+  cursor: pointer;
+}
+
+.ausgelistet summary::before {
+  content: "▸";
+  margin-right: 0.5rem;
+  color: var(--grau);
+}
+
+.ausgelistet[open] summary::before {
+  content: "▾";
+}
+
+.ausgelistet summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Zeile: Verweis und „Zurückholen“ nebeneinander, wenn Platz ist; sonst steht der Knopf
+   in voller Breite darunter, damit der Name nicht mitten im Wort umbricht. */
+.ausgelistet .weinliste li {
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.ausgelistet .weinliste .verweis {
+  flex: 999 1 15rem;
+}
+
+.ausgelistet button.nochmal {
+  flex: 1 0 auto;
+  min-height: 2.75rem;
+}
+
+.ausgelistet .meldung {
+  flex-basis: 100%;
+  margin: 0;
 }
 
 /* Gründe für Unsicheres, immer sichtbar */

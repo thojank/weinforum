@@ -229,12 +229,12 @@ Baserow kennt kein bedingtes Schreiben. `Herkunft` ist eine einzige Spalte mit J
 **Fall 3 – Lesen von anderer Stelle: bleibt offen.** Betrifft ein Lesen, das ein anderes Gerät angestoßen hat oder das nach dem Aufnehmen noch läuft, während die Prüfkarte derselben Karte schon bedient wird.
 
 - **Fenster A:** Zwischen dem zweiten Holen des Lesens und seinem Schreiben liegt eine Anfrage an Baserow. Speichert die Prüfkarte genau dann, überschreibt das Lesen `Herkunft` und die Spalte des Feldes mit seinem Stand. Folge: Die Bestätigung oder Änderung ist weg; das Feld zeigt wieder „gelesen“.
-- **Fenster B:** Zwischen dem Holen der Schreibroute und ihrem Schreiben liegt ebenfalls eine Anfrage. Schreibt das Lesen genau dann, überschreibt die Prüfkarte dessen `Herkunft`. Folge: Neu gelesene Felder haben einen Wert, aber keinen Herkunftseintrag; die Seite zeigt sie als „ohne Herkunft“, und die Schutzregeln behandeln sie wie von Hand eingetragen.
+- **Fenster B:** Zwischen dem Holen der Schreibroute und ihrem Schreiben liegt ebenfalls eine Anfrage. Schreibt das Lesen genau dann, überschreibt die Prüfkarte dessen `Herkunft` mit dem Stand von vor dem Lesen. Folge: Die Spalten tragen die neu gelesenen Werte, `Herkunft` aber die alten Einträge, die alten Einträge unter `unsicher` und den alten `lauf`. War ein Feld vorher leer, hat sein neuer Wert keinen Eintrag; die Seite zeigt ihn als „ohne Herkunft“, und die Schutzregeln behandeln ihn wie von Hand eingetragen. War es schon gelesen, steht der neue Wert mit dem alten Eintrag („gelesen“) da. Was das neue Lesen als unsicher gemeldet hat, fehlt unter `unsicher`.
 
 In beiden Fenstern gilt:
 
 - Nichts gilt als bestätigt, was der Inhaber nicht gesehen hat: `bestaetigen` schreibt den gesehenen Wert zusammen mit dem Eintrag.
-- Der Verlust ist auf der Prüfkarte sichtbar (Feld nicht bestätigt bzw. „ohne Herkunft“).
+- Der Verlust ist auf der Prüfkarte sichtbar (Feld nicht bestätigt bzw. „ohne Herkunft“), sobald die Seite einen neueren Stand hat: mit der Antwort des nächsten Schritts oder beim nächsten Öffnen. Der Schritt im Fenster selbst antwortet mit 200.
 - „Karte ist geprüft“ prüft die Pflichtfelder auf dem Server gegen den frischen Stand. Fällt eine Bestätigung danach noch weg, korrigiert der nächste Schritt den Stand („Stand bleibt wahr“).
 - Die häufigste Ursache vermeidet die Oberfläche: Unter „Gerade aufgenommen“ erscheint der Verweis „Karte prüfen“ erst, wenn das Lesen beendet ist.
 

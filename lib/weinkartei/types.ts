@@ -36,5 +36,16 @@ export interface Wein {
   ean?: string;
   /** Eigener Artikelcode; führt das Bestandssystem. */
   artikelcode?: string;
+  /** Kleine Vorschau des Vorderetiketts, falls ein Foto vorliegt. */
+  fotoVorneVorschau?: string;
   stand: KartenStand;
 }
+
+/** Was beim Aufnehmen ankommt: die beiden Fotos. */
+export interface Aufnahme {
+  vorne: Blob;
+  hinten?: Blob;
+}
+
+/** Name, den eine frisch aufgenommene Karte trägt, bis das Etikett gelesen ist. */
+export const NAME_UNGELESEN = "(noch nicht gelesen)";

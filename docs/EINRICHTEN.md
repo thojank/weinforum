@@ -54,6 +54,7 @@ Ab jetzt baut Vercel bei jedem Push auf `main` von selbst neu.
 
 ## Wichtig zu wissen
 
-- Die Seite ist nach dem Deploy öffentlich erreichbar. Wer die Adresse kennt, sieht unter `/weine` die Liste. Der Zugangscode aus `.env.example` ist noch nicht gebaut. Bis dahin nur die Beispielzeile oder unkritische Daten in der Tabelle halten und die Adresse nicht weitergeben.
+- Zugangscode: In Vercel muss `APP_ZUGANGSCODE` gesetzt sein, sonst zeigt die Seite nur „Zugangscode ist nicht eingerichtet“. Wer die Adresse öffnet, wird nach dem Code gefragt; danach merkt sich der Browser ihn 90 Tage. Auf dem eigenen Rechner läuft die App auch ohne Code.
+- Die Spalten `Foto vorne` und `Foto hinten` müssen Dateifelder sein und genau so heißen; `Stand` muss ein Textfeld bleiben, sonst lässt sich kein Wein aufnehmen.
 - Die Beispielzeile kann gelöscht werden, sobald die Probe geklappt hat.
 - Die Spalten kommen beim Import als Text an. Das genügt für den Anfang; Feldtypen wie Auswahl oder Zahl lassen sich später in Baserow umstellen.

@@ -57,3 +57,76 @@ a.kachel.zweitrangig {
   color: var(--grau);
   font-size: 0.9rem;
 }
+
+a {
+  color: var(--weinrot);
+}
+
+.formular {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.formular label {
+  font-weight: 600;
+  margin-top: 0.4rem;
+}
+
+.formular input {
+  font: inherit;
+  padding: 0.7rem;
+  border: 1.5px solid var(--linie);
+  border-radius: 0.6rem;
+  background: #fff;
+  width: 100%;
+}
+
+.formular button {
+  font: inherit;
+  font-weight: 600;
+  padding: 1rem;
+  margin-top: 0.6rem;
+  border: 0;
+  border-radius: 0.75rem;
+  background: var(--weinrot);
+  color: #fff;
+}
+
+.formular button:disabled {
+  opacity: 0.5;
+}
+
+.erfolg {
+  color: var(--herkunft-bestaetigt);
+  font-weight: 600;
+}
+
+.fehler {
+  color: #a3261d;
+  font-weight: 600;
+}
+
+.weinliste {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.weinliste li {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--linie);
+}
+
+.weinliste img,
+.weinliste .platzhalter {
+  width: 48px;
+  height: 48px;
+  flex: none;
+  border-radius: 0.4rem;
+  object-fit: cover;
+  background: var(--linie);
+}

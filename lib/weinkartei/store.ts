@@ -1,5 +1,5 @@
 import "server-only";
-import type { Wein } from "./types";
+import type { Aufnahme, Wein } from "./types";
 import { baserowStore } from "./baserow";
 
 /**
@@ -9,6 +9,8 @@ import { baserowStore } from "./baserow";
  */
 export interface WeinStore {
   liste(): Promise<Wein[]>;
+  /** Legt aus den Fotos eine neue Karte mit Stand „aufgenommen“ an. */
+  aufnehmen(aufnahme: Aufnahme): Promise<Wein>;
 }
 
 /** Liefert null, solange die Datenbank nicht eingerichtet ist. */

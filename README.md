@@ -2,7 +2,7 @@
 
 Kleine Web-App für das Weinforum in Groß Lafferde: Weine per Foto erfassen, prüfen und danach überall verwenden – Weinliste, Monatsplakat, Preisschild, Beitrag.
 
-Stand: Grundgerüst. Es gibt eine Startseite, eine Liste und eine Statusadresse; Aufnehmen und Prüfen sind noch nicht gebaut.
+Stand: Zugangscode und Aufnehmen sind gebaut. Zwei Fotos am Handy legen eine Karte „aufgenommen“ in Baserow an. Das Lesen der Etiketten und die Prüfkarte fehlen noch.
 
 ## Einrichten
 

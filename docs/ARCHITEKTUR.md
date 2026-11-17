@@ -34,5 +34,5 @@
 
 ## Noch offen
 
-- Anmeldung; bis dahin ein einfacher Zugangscode.
+- Echte Anmeldung je Person; bis dahin ein gemeinsamer Zugangscode (`proxy.ts`, `lib/zugang.ts`).
 - Schriften und Logo für die Vorlagen der Ausgaben.

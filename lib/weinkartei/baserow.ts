@@ -3,6 +3,7 @@ import {
   ART_TEXTE,
   LESE_FELDER,
   NAME_UNGELESEN,
+  PRUEF_FELDER,
   type AngabenStand,
   type Aufnahme,
   type FeldHerkunft,
@@ -10,11 +11,12 @@ import {
   type KartenHerkunft,
   type KartenStand,
   type LeseFeld,
+  type PruefFeld,
   type Unsicher,
   type Wein,
   type Weinart,
 } from "./types";
-import type { WeinStore } from "./store";
+import type { HerkunftModus, SpeicherAenderung, WeinStore } from "./store";
 
 // Umsetzung des WeinStore für Baserow.
 // Erwartet die Spaltennamen aus docs/DATENMODELL.md.
@@ -199,9 +201,6 @@ function zuHerkunft(wert: unknown): KartenHerkunft | null {
   return ergebnis;
 }
 
-/** Wie `zuWein` mit ungültigem Text in „Herkunft“ umgeht. */
-type HerkunftModus = "streng" | "nachsichtig";
-
 /**
  * Einzige Stelle, an der Rohwerte von Baserow in Typen der App umgewandelt werden.
  * Streng: ungültige Herkunft ist ein Fehler. Nachsichtig: die Karte bleibt ohne `herkunft`.
@@ -211,6 +210,12 @@ function zuWein(zeile: Zeile, modus: HerkunftModus = "nachsichtig"): Wein {
   for (const feld of LESE_FELDER) {
     const roh = rohtext(zeile[feld]);
     if (roh !== undefined) lesewerte[feld] = roh;
+  }
+  // Alle sechzehn Felder der Prüfkarte; eine fehlende Inhaberspalte gilt hier als leer.
+  const pruefwerte: Partial<Record<PruefFeld, string>> = {};
+  for (const feld of PRUEF_FELDER) {
+    const roh = rohtext(zeile[feld]);
+    if (roh !== undefined) pruefwerte[feld] = roh;
   }
 
   const herkunft = zuHerkunft(zeile[SPALTE_HERKUNFT]);
@@ -242,6 +247,10 @@ function zuWein(zeile: Zeile, modus: HerkunftModus = "nachsichtig"): Wein {
     fotoVorneVorschau: vorschau(zeile[SPALTE_FOTO_VORNE]),
     fotoHintenVorschau: vorschau(zeile[SPALTE_FOTO_HINTEN]),
     lesewerte,
+    preisFlasche: pruefwerte["Preis Flasche"],
+    preisGlas: pruefwerte["Preis Glas"],
+    kurztextKurz: pruefwerte["Kurztext kurz"],
+    pruefwerte,
     stand: zuStand(zeile[SPALTE_STAND]),
   };
 }
@@ -369,11 +378,12 @@ export function baserowStore({ url, token, tabelle }: Einstellungen): WeinStore 
       return zuWein((await antwort.json()) as Zeile);
     },
 
-    async holen(kennung: string) {
+    async holen(kennung: string, o?: { herkunft?: HerkunftModus }) {
       const zeile = await zeileSuchen(kennung);
       if (!zeile) return null;
+      // Die drei Inhaberspalten sind hier nicht Pflicht; erst das Schreiben meldet sie.
       spaltenPruefen(zeile, PFLICHTSPALTEN_HOLEN);
-      return zuWein(zeile, "streng");
+      return zuWein(zeile, o?.herkunft ?? "streng");
     },
 
     async aktualisieren(kennung, felder, herkunft) {
@@ -408,6 +418,51 @@ export function baserowStore({ url, token, tabelle }: Einstellungen): WeinStore 
         throw new Error("Baserow liefert nach dem Schreiben eine unerwartete Antwort.");
       }
       spaltenPruefen(neueZeile, geschriebeneSpalten);
+    },
+
+    async speichern(kennung: string, aenderung: SpeicherAenderung) {
+      const zeile = await zeileSuchen(kennung);
+      if (!zeile) {
+        throw new Error("Diese Karte gibt es nicht.");
+      }
+
+      // Nur Felder der Prüfkarte, Herkunft und Stand; Fotos, Kennung und andere Spalten nie.
+      const daten: Record<string, string | null> = {};
+      for (const feld of PRUEF_FELDER) {
+        const wert = aenderung.felder[feld];
+        if (wert !== undefined) daten[feld] = wert;
+      }
+      daten[SPALTE_HERKUNFT] = JSON.stringify(aenderung.herkunft);
+      if (aenderung.stand !== undefined) {
+        if (!KARTEN_STAENDE.includes(aenderung.stand)) {
+          throw new Error("Der Stand der Karte ist ungültig. Es wurde nichts gespeichert.");
+        }
+        daten[SPALTE_STAND] = aenderung.stand;
+      }
+
+      // Baserow übergeht unbekannte Spalten still; deshalb vorher prüfen, damit nichts halb geschrieben wird.
+      const geschriebeneSpalten = Object.keys(daten);
+      spaltenPruefen(zeile, geschriebeneSpalten);
+
+      const antwort = await anfrage(`${tabellenAdresse}/${zeilenId(zeile)}/?user_field_names=true`, {
+        method: "PATCH",
+        headers: { ...kopf, "Content-Type": "application/json" },
+        body: JSON.stringify(daten),
+      });
+      if (!antwort.ok) {
+        throw new Error(`Baserow lehnt das Schreiben der Karte ab (Status ${antwort.status}).`);
+      }
+
+      const neueZeile: unknown = await antwort.json().catch(() => null);
+      if (!istObjekt(neueZeile)) {
+        throw new Error("Baserow liefert nach dem Schreiben eine unerwartete Antwort.");
+      }
+      spaltenPruefen(neueZeile, [...geschriebeneSpalten, ...PFLICHTSPALTEN_HOLEN]);
+      if (neueZeile[SPALTE_KENNUNG] !== kennung) {
+        throw new Error("Baserow liefert nach dem Schreiben eine andere Karte zurück.");
+      }
+      // Die Karte, wie Baserow sie nach dem Schreiben meldet; ohne zweites Holen.
+      return zuWein(neueZeile, "streng");
     },
   };
 }

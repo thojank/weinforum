@@ -11,21 +11,45 @@ type Zustand =
 
 const LANGE_KANTE = 1600;
 
-/** Verkleinert ein Foto, damit es schnell hochlädt und wenig Speicher braucht. */
+/** iPhone-Fotos kommen am Rechner als HEIC an; die meisten Browser können das nicht anzeigen. */
+function istHeic(datei: File): boolean {
+  return /image\/hei[cf]/i.test(datei.type) || /\.hei[cf]$/i.test(datei.name);
+}
+
+async function heicZuJpeg(datei: File): Promise<Blob> {
+  // Wird nur geladen, wenn wirklich ein HEIC-Foto kommt.
+  // @ts-ignore – das Paket bringt je nach Version keine Typen mit.
+  const paket = (await import("heic-to")) as {
+    heicTo: (auftrag: { blob: Blob; type: string; quality?: number }) => Promise<Blob>;
+  };
+  return paket.heicTo({ blob: datei, type: "image/jpeg", quality: 0.9 });
+}
+
+async function zeichnen(quelle: Blob): Promise<Blob> {
+  const bild = await createImageBitmap(quelle);
+  const faktor = Math.min(1, LANGE_KANTE / Math.max(bild.width, bild.height));
+  const leinwand = document.createElement("canvas");
+  leinwand.width = Math.round(bild.width * faktor);
+  leinwand.height = Math.round(bild.height * faktor);
+  leinwand.getContext("2d")?.drawImage(bild, 0, 0, leinwand.width, leinwand.height);
+  bild.close();
+  const blob = await new Promise<Blob | null>((fertig) => leinwand.toBlob(fertig, "image/jpeg", 0.82));
+  if (!blob) throw new Error("Das Foto ließ sich nicht umwandeln.");
+  return blob;
+}
+
+/**
+ * Macht aus jedem Foto ein verkleinertes JPEG, damit es schnell hochlädt
+ * und überall angezeigt werden kann. HEIC wird vorher umgewandelt.
+ */
 async function verkleinern(datei: File): Promise<Blob> {
   try {
-    const bild = await createImageBitmap(datei);
-    const faktor = Math.min(1, LANGE_KANTE / Math.max(bild.width, bild.height));
-    const leinwand = document.createElement("canvas");
-    leinwand.width = Math.round(bild.width * faktor);
-    leinwand.height = Math.round(bild.height * faktor);
-    leinwand.getContext("2d")?.drawImage(bild, 0, 0, leinwand.width, leinwand.height);
-    bild.close();
-    const blob = await new Promise<Blob | null>((fertig) => leinwand.toBlob(fertig, "image/jpeg", 0.82));
-    return blob ?? datei;
+    return await zeichnen(datei);
   } catch {
-    // Kann der Browser das Format nicht verkleinern, geht das Original hoch.
-    return datei;
+    if (istHeic(datei)) {
+      return zeichnen(await heicZuJpeg(datei));
+    }
+    throw new Error(`„${datei.name}“ ist kein Foto, das dieser Browser lesen kann. Bitte als JPEG oder PNG wählen.`);
   }
 }
 
@@ -38,10 +62,16 @@ export function Aufnahme() {
   async function senden() {
     if (!vorne) return;
     setZustand({ art: "sendet" });
+    const formular = new FormData();
     try {
-      const formular = new FormData();
       formular.append("vorne", await verkleinern(vorne), "vorne.jpg");
       if (hinten) formular.append("hinten", await verkleinern(hinten), "hinten.jpg");
+    } catch (fehler) {
+      const text = fehler instanceof Error && fehler.message ? fehler.message : "Das Foto ließ sich nicht lesen.";
+      setZustand({ art: "fehler", text });
+      return;
+    }
+    try {
       const antwort = await fetch("/api/weine", { method: "POST", body: formular });
       const daten = (await antwort.json()) as { kennung?: string; fehler?: string };
       if (!antwort.ok || !daten.kennung) {

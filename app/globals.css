@@ -703,6 +703,749 @@ a.verweis {
   }
 }
 
+/* Prüfkarte */
+
+/* Alle Regeln hängen an .pruefkarte, weil .feld, .fotos, .leer, .meldung und .fehler
+   anderswo schon belegt sind. Aufbau nach Mockup Option A „Ruhige Karteikarte“; ohne die
+   gestaffelte Einblendung beim Laden. Bewegung nur als Rückmeldung beim Drücken und weicher
+   Wechsel der Farben. */
+.pruefkarte p {
+  margin: 0;
+}
+
+.pruefkarte .zurueck {
+  margin: -0.6rem 0 0.15rem;
+}
+
+/* Rück-Link mit Zielgröße für den Daumen */
+.pruefkarte .zurueck a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+
+.pruefkarte .kopf .jahr {
+  font-family: var(--schrift-titel);
+  font-weight: 700;
+  color: var(--grau);
+  font-size: 1.3rem;
+  margin-left: 0.35rem;
+}
+
+.pruefkarte h2 {
+  margin-bottom: 0.5rem;
+}
+
+/* Band oben: ausgelistet, oder Herkunft nicht lesbar */
+.pruefkarte .band {
+  margin-top: 0.9rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.75rem;
+  border: 1.5px solid var(--grau);
+  background: var(--weiss);
+}
+
+.pruefkarte .band.fehler {
+  border-color: var(--fehler);
+}
+
+.pruefkarte .band strong {
+  font-family: var(--schrift-titel);
+  font-weight: 700;
+  display: block;
+}
+
+/* Fotos: zwei nebeneinander, ein Tipp vergrößert */
+.pruefkarte .fotos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.pruefkarte .foto {
+  font: inherit;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 1.5px solid var(--linie);
+  border-radius: 0.75rem;
+  background: var(--weiss);
+  color: var(--tinte);
+  overflow: hidden;
+  cursor: zoom-in;
+  text-align: left;
+  transition: transform 0.1s ease, border-color 0.2s ease;
+}
+
+.pruefkarte .foto img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: contain;
+  background: var(--linie);
+}
+
+.pruefkarte .foto.platzhalter {
+  cursor: default;
+}
+
+.pruefkarte .foto .ersatz {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 3 / 4;
+  padding: 0.75rem;
+  background: var(--papier);
+  color: var(--grau);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.pruefkarte .foto .unter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0 0.5rem;
+  padding: 0.4rem 0.6rem 0.45rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.pruefkarte .foto .unter span + span {
+  color: var(--weinrot);
+  font-weight: 500;
+}
+
+.pruefkarte button.foto:active {
+  transform: scale(0.985);
+}
+
+/* Gruppen und Felder */
+.pruefkarte .gruppe {
+  margin-top: 1.75rem;
+}
+
+.pruefkarte .gruppe .zusatz {
+  margin: -0.3rem 0 0.6rem;
+}
+
+.pruefkarte .felder {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+/* Linker Rand zeigt Herkunft und Stand; dazu steht immer das Wort. */
+.pruefkarte .feld {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.1rem 0.75rem;
+  align-items: center;
+  padding: 0.6rem 0.75rem 0.65rem;
+  background: var(--weiss);
+  border: 1.5px solid var(--linie);
+  border-left: 0.35rem solid var(--farbe, var(--linie));
+  border-radius: 0.75rem;
+  scroll-margin: 1rem 0 12rem;
+  transition: border-color 0.3s ease;
+}
+
+.pruefkarte .feld.gelesen {
+  --farbe: var(--herkunft-etikett);
+}
+
+.pruefkarte .feld.bestaetigt {
+  --farbe: var(--herkunft-bestaetigt);
+}
+
+.pruefkarte .feld.unsicher {
+  --farbe: var(--herkunft-ki);
+  border-style: dashed;
+  border-left-style: solid;
+}
+
+.pruefkarte .feld.leer {
+  --farbe: var(--linie);
+}
+
+.pruefkarte .feld.leer.unsicher {
+  --farbe: var(--herkunft-ki);
+}
+
+.pruefkarte .feld.ungueltig {
+  --farbe: var(--fehler);
+}
+
+.pruefkarte .feld .inhalt {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.pruefkarte .feld .name {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--grau);
+}
+
+.pruefkarte .pflicht {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--grau);
+  padding: 0 0.35rem;
+  border: 1px solid var(--linie);
+  border-radius: 0.4rem;
+}
+
+.pruefkarte .wert {
+  font: inherit;
+  font-weight: 600;
+  font-size: 1.05rem;
+  line-height: 1.3;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.5rem;
+  max-width: 100%;
+  min-height: 2.75rem;
+  margin: 0.05rem 0 0 -0.35rem;
+  padding: 0.6rem 0.35rem;
+  border: 0;
+  border-radius: 0.4rem;
+  background: transparent;
+  color: var(--tinte);
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.pruefkarte p.wert {
+  cursor: default;
+}
+
+.pruefkarte .wert .stift {
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: var(--weinrot);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.pruefkarte .wert.fehlt {
+  font-weight: 500;
+  color: var(--grau);
+}
+
+.pruefkarte button.wert:active:not([aria-disabled="true"]) {
+  transform: scale(0.985);
+  background: var(--papier);
+}
+
+.pruefkarte button.wert[aria-disabled="true"] {
+  cursor: default;
+}
+
+.pruefkarte .marke {
+  font-size: 0.85rem;
+  color: var(--farbe, var(--grau));
+  font-weight: 600;
+}
+
+/* Gründe für Unsicheres: vollständig, nie gekürzt */
+.pruefkarte .grund {
+  grid-column: 1 / -1;
+  margin-top: 0.4rem;
+  padding: 0.35rem 0.55rem;
+  border-left: 3px solid var(--herkunft-ki);
+  background: var(--papier);
+  border-radius: 0 0.4rem 0.4rem 0;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.pruefkarte .grund b {
+  color: var(--herkunft-ki);
+}
+
+/* Gespeicherter Wert, der die Prüfung nicht besteht, z. B. „Weißwein“ in Art */
+.pruefkarte .ungueltig-hinweis {
+  grid-column: 1 / -1;
+  margin-top: 0.3rem;
+  color: var(--fehler);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Rückmeldung eines Schritts am Feld */
+.pruefkarte .rueckmeldung {
+  grid-column: 1 / -1;
+  margin-top: 0.4rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.pruefkarte .rueckmeldung.hinweis-satz {
+  color: var(--herkunft-ki);
+}
+
+.pruefkarte .rueckmeldung.fehler-satz {
+  color: var(--fehler);
+}
+
+.pruefkarte .rueckmeldung .entwurf {
+  color: var(--tinte);
+  font-weight: 400;
+}
+
+.pruefkarte .rueckmeldung .knopf {
+  margin-top: 0.4rem;
+}
+
+/* Rechte Spalte: „Stimmt so“, „Bleibt leer“ oder der Stand */
+.pruefkarte .rechts {
+  text-align: right;
+}
+
+.pruefkarte .stimmt {
+  font: inherit;
+  font-family: var(--schrift-titel);
+  font-weight: 700;
+  font-size: 0.95rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.8rem;
+  border: 1.5px solid var(--weinrot);
+  border-radius: 0.6rem;
+  background: transparent;
+  color: var(--weinrot);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.1s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.pruefkarte .stimmt:active {
+  transform: scale(0.96);
+  background: var(--weinrot);
+  color: var(--weiss);
+}
+
+.pruefkarte .stand-ok {
+  font-family: var(--schrift-titel);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--herkunft-bestaetigt);
+  white-space: nowrap;
+}
+
+.pruefkarte .speichert {
+  display: inline-block;
+  max-width: 7rem;
+  font-size: 0.85rem;
+  color: var(--grau);
+  text-align: right;
+}
+
+/* Bearbeiten */
+.pruefkarte .feld.bearbeiten {
+  display: block;
+  border-color: var(--weinrot);
+  border-left-color: var(--weinrot);
+  border-style: solid;
+}
+
+.pruefkarte .bearbeiten .beschriftung {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.5rem;
+  font-weight: 600;
+}
+
+.pruefkarte .bearbeiten .format {
+  font-weight: 400;
+  color: var(--grau);
+  font-size: 0.85rem;
+}
+
+.pruefkarte .eingabe {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+/* font: inherit hält die Schrift bei 17 px; sonst zoomt iOS beim Antippen. */
+.pruefkarte .eingabe input,
+.pruefkarte .eingabe textarea {
+  font: inherit;
+  flex: 1;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0.7rem;
+  border: 1.5px solid var(--linie);
+  border-radius: 0.6rem;
+  background: var(--weiss);
+  color: var(--tinte);
+  transition: border-color 0.15s ease;
+}
+
+.pruefkarte .eingabe textarea {
+  min-height: 6.5rem;
+  resize: vertical;
+}
+
+.pruefkarte .eingabe input:focus,
+.pruefkarte .eingabe textarea:focus {
+  border-color: var(--weinrot);
+}
+
+.pruefkarte .eingabe [aria-invalid="true"] {
+  border-color: var(--fehler);
+}
+
+.pruefkarte .einheit {
+  color: var(--grau);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pruefkarte .zaehler {
+  text-align: right;
+  font-size: 0.85rem;
+  color: var(--grau);
+  margin-top: 0.2rem;
+}
+
+.pruefkarte .zaehler.zuviel {
+  color: var(--fehler);
+  font-weight: 600;
+}
+
+.pruefkarte .tipps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.pruefkarte .tipp {
+  font: inherit;
+  font-weight: 600;
+  min-height: 2.75rem;
+  padding: 0.45rem 0.85rem;
+  border: 1.5px solid var(--linie);
+  border-radius: 0.6rem;
+  background: var(--papier);
+  color: var(--tinte);
+  cursor: pointer;
+  transition: transform 0.1s ease, border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.pruefkarte .tipp.gewaehlt {
+  border-color: var(--weinrot);
+  background: var(--weinrot);
+  color: var(--weiss);
+}
+
+.pruefkarte .tipp:active {
+  transform: scale(0.96);
+}
+
+.pruefkarte .feldfehler {
+  margin-top: 0.4rem;
+  color: var(--fehler);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.pruefkarte .knoepfe {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.7rem;
+}
+
+/* Knöpfe: Hauptaktion gefüllt in Weinrot, Nebenaktion mit Rahmen */
+.pruefkarte .knopf {
+  font: inherit;
+  font-family: var(--schrift-titel);
+  font-weight: 700;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.9rem;
+  border: 1.5px solid var(--weinrot);
+  border-radius: 0.6rem;
+  background: transparent;
+  color: var(--weinrot);
+  cursor: pointer;
+  transition: transform 0.1s ease, background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.pruefkarte .knopf.haupt {
+  flex: 1;
+  background: var(--weinrot);
+  color: var(--weiss);
+}
+
+.pruefkarte .knopf.leise {
+  border-color: var(--linie);
+  color: var(--tinte);
+}
+
+.pruefkarte .knopf:active:not([aria-disabled="true"]) {
+  transform: scale(0.97);
+}
+
+.pruefkarte [aria-disabled="true"]:is(.knopf, .gross, .zweit, .stimmt) {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* Foto beim Bearbeiten: „Foto ansehen: Vorne / Hinten“ */
+.pruefkarte .foto-zugriff {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.7rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--linie);
+  font-size: 0.9rem;
+  color: var(--grau);
+}
+
+.pruefkarte .foto-zugriff .mini {
+  font: inherit;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.75rem;
+  padding: 0.2rem 0.6rem 0.2rem 0.2rem;
+  border: 1.5px solid var(--linie);
+  border-radius: 0.6rem;
+  background: var(--weiss);
+  color: var(--tinte);
+  cursor: zoom-in;
+  transition: transform 0.1s ease, border-color 0.15s ease;
+}
+
+.pruefkarte .foto-zugriff .mini img,
+.pruefkarte .foto-zugriff .mini-ersatz {
+  display: block;
+  width: 1.9rem;
+  height: 2.5rem;
+  border-radius: 0.3rem;
+  object-fit: cover;
+  background: var(--linie);
+}
+
+.pruefkarte .foto-zugriff .mini:active {
+  transform: scale(0.96);
+}
+
+/* Nebenaktionen unter den Feldern */
+.pruefkarte .neben {
+  margin-top: 1.75rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.pruefkarte .neben .knopf {
+  width: 100%;
+}
+
+.pruefkarte .lesemeldung {
+  font-weight: 600;
+  color: var(--herkunft-etikett);
+}
+
+.pruefkarte .lesemeldung.fehler {
+  color: var(--fehler);
+}
+
+/* Haftende Leiste unten mit der Hauptaktion */
+.pruefkarte .leiste {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  margin: 1.5rem -1rem 0;
+  padding: 0.75rem 1rem calc(0.9rem + env(safe-area-inset-bottom));
+  background: color-mix(in srgb, var(--papier) 94%, transparent);
+  backdrop-filter: blur(6px);
+  border-top: 1.5px solid var(--linie);
+  display: grid;
+  gap: 0.5rem;
+}
+
+.pruefkarte .leiste .gross,
+.pruefkarte .leiste .zweit {
+  font: inherit;
+  font-family: var(--schrift-titel);
+  font-weight: 700;
+  display: block;
+  width: 100%;
+  min-height: 2.75rem;
+  border-radius: 0.75rem;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.1s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.pruefkarte .leiste .gross {
+  padding: 1rem;
+  border: 0;
+  background: var(--weinrot);
+  color: var(--weiss);
+}
+
+.pruefkarte .leiste .zweit {
+  padding: 0.7rem;
+  border: 1.5px solid var(--weinrot);
+  background: transparent;
+  color: var(--weinrot);
+}
+
+.pruefkarte .leiste .gross:active:not([aria-disabled="true"]),
+.pruefkarte .leiste .zweit:active:not([aria-disabled="true"]) {
+  transform: scale(0.985);
+}
+
+.pruefkarte .meldung {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.pruefkarte .meldung.fehler {
+  color: var(--fehler);
+}
+
+.pruefkarte .meldung.erfolg {
+  color: var(--herkunft-bestaetigt);
+}
+
+.pruefkarte .meldung.erfolg strong {
+  font-family: var(--schrift-titel);
+  margin-right: 0.4rem;
+}
+
+.pruefkarte .meldung.hinweis {
+  color: var(--herkunft-ki);
+}
+
+.pruefkarte .meldung span {
+  font-weight: 400;
+  color: var(--tinte);
+}
+
+.pruefkarte .meldung .knopf {
+  margin-top: 0.4rem;
+}
+
+/* Überlagerungen: Foto in voller Größe und Rückfrage beim Auslisten */
+.pruefkarte dialog {
+  border: 0;
+  padding: 0;
+  border-radius: 0.75rem;
+  background: var(--weiss);
+  color: var(--tinte);
+  max-width: min(36rem, calc(100vw - 1.5rem));
+  width: 100%;
+}
+
+.pruefkarte dialog::backdrop {
+  background: color-mix(in srgb, var(--tinte) 78%, transparent);
+}
+
+.pruefkarte .foto-gross img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 78vh;
+  object-fit: contain;
+  background: var(--linie);
+}
+
+.pruefkarte .foto-gross .ersatz {
+  padding: 3rem 1rem;
+  text-align: center;
+  color: var(--grau);
+}
+
+.pruefkarte .dialog-fuss {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+}
+
+.pruefkarte .dialog-fuss strong {
+  font-family: var(--schrift-titel);
+}
+
+.pruefkarte .rueckfrage-inhalt {
+  padding: 1.1rem 1rem 1rem;
+}
+
+.pruefkarte .rueckfrage-inhalt h2 {
+  margin-bottom: 0.4rem;
+}
+
+.pruefkarte .rueckfrage-inhalt .knoepfe {
+  margin-top: 1rem;
+}
+
+@media (hover: hover) {
+  .pruefkarte button.foto:hover {
+    border-color: var(--weinrot);
+  }
+
+  .pruefkarte button.wert:hover:not([aria-disabled="true"]) {
+    background: var(--papier);
+  }
+
+  .pruefkarte .stimmt:hover {
+    background: var(--weinrot);
+    color: var(--weiss);
+  }
+
+  .pruefkarte .tipp:hover {
+    border-color: var(--weinrot);
+  }
+
+  .pruefkarte .knopf:hover:not([aria-disabled="true"]) {
+    background: var(--weinrot);
+    color: var(--weiss);
+    border-color: var(--weinrot);
+  }
+
+  .pruefkarte .knopf.haupt:hover:not([aria-disabled="true"]),
+  .pruefkarte .leiste .gross:hover:not([aria-disabled="true"]) {
+    background: var(--weinrot-dunkel);
+    border-color: var(--weinrot-dunkel);
+  }
+
+  .pruefkarte .foto-zugriff .mini:hover {
+    border-color: var(--weinrot);
+  }
+
+  .pruefkarte .leiste .zweit:hover:not([aria-disabled="true"]) {
+    background: var(--weinrot);
+    color: var(--weiss);
+  }
+}
+
 /* Weniger Bewegung, wenn das Gerät darum bittet: schaltet alle Animationen und Übergänge ab.
    Dank !important gilt das auch für Regeln, die weiter unten stehen. */
 @media (prefers-reduced-motion: reduce) {

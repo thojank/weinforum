@@ -6,14 +6,14 @@ export type LeseErgebnis = { art: "ok"; antwort: LeseAntwort } | { art: "fehler"
 
 const STATUS_NICHT_ANGEMELDET = 401;
 
-const TEXT_NEU_ANMELDEN = "Bitte melde dich neu an.";
-const TEXT_KEINE_VERBINDUNG = "Keine Verbindung. Bitte noch einmal versuchen.";
+export const TEXT_NEU_ANMELDEN = "Bitte melde dich neu an.";
+export const TEXT_KEINE_VERBINDUNG = "Keine Verbindung. Bitte noch einmal versuchen.";
 /** Antwort ohne verwertbares JSON, z. B. eine Zeitüberschreitung der Plattform. */
-const TEXT_KEINE_ANTWORT = "Der Server hat nicht rechtzeitig geantwortet.";
+export const TEXT_KEINE_ANTWORT = "Der Server hat nicht rechtzeitig geantwortet.";
 /** Antwort mit Fehlerstatus, aber ohne eigenen Satz. */
-const TEXT_UNBEKANNTER_FEHLER = "Der Server hat einen Fehler gemeldet.";
+export const TEXT_UNBEKANNTER_FEHLER = "Der Server hat einen Fehler gemeldet.";
 /** JSON, aber nicht in der erwarteten Form. */
-const TEXT_ANTWORT_UNBRAUCHBAR = "Die Antwort des Servers war unbrauchbar.";
+export const TEXT_ANTWORT_UNBRAUCHBAR = "Die Antwort des Servers war unbrauchbar.";
 
 function istObjekt(wert: unknown): wert is Record<string, unknown> {
   return typeof wert === "object" && wert !== null && !Array.isArray(wert);

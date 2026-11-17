@@ -50,6 +50,14 @@ export const LESE_FELDER = [
 ] as const;
 export type LeseFeld = (typeof LESE_FELDER)[number];
 
+/** Die drei Spalten, die nur der Inhaber füllt. */
+export const INHABER_FELDER = ["Preis Flasche", "Preis Glas", "Kurztext kurz"] as const;
+export type InhaberFeld = (typeof INHABER_FELDER)[number];
+
+/** Alle Felder der Prüfkarte, in der Reihenfolge der Seite. */
+export const PRUEF_FELDER = [...LESE_FELDER, ...INHABER_FELDER] as const;
+export type PruefFeld = (typeof PRUEF_FELDER)[number];
+
 /** Herkunft und Stand einer einzelnen Angabe. */
 export interface FeldHerkunft {
   herkunft: Herkunft;
@@ -108,7 +116,45 @@ export interface Wein {
    * nicht umwandelbare Werte verlieren.
    */
   lesewerte?: Partial<Record<LeseFeld, string>>;
+  /** Betrag in Euro als Text mit Punkt und zwei Nachkommastellen, z. B. „8.90“. */
+  preisFlasche?: string;
+  /** Betrag in Euro als Text mit Punkt und zwei Nachkommastellen, z. B. „4.50“. */
+  preisGlas?: string;
+  kurztextKurz?: string;
+  /**
+   * Text aller sechzehn Felder der Prüfkarte genau so, wie er in Baserow steht; nur nicht leere
+   * Spalten. Bedeutung wie `lesewerte`, also kann `Name` „(noch nicht gelesen)“ sein. Ob eine
+   * Spalte einen Wert hat, entscheidet `hatWert` aus `pruefen.ts`.
+   */
+  pruefwerte?: Partial<Record<PruefFeld, string>>;
   stand: KartenStand;
+}
+
+/** Ein Schritt der Prüfkarte, wie ihn der Browser an `POST /api/weine/[kennung]/bearbeiten` schickt. */
+export type Aktion =
+  /** `wert` ist der gesehene Wert, genau so, wie die Seite ihn aus `werte` bekommen hat. */
+  | { aktion: "bestaetigen"; felder: { feld: PruefFeld; wert: string }[] }
+  | { aktion: "aendern"; feld: PruefFeld; wert: string }
+  | { aktion: "leeren"; feld: PruefFeld }
+  | { aktion: "abschliessen" }
+  | { aktion: "auslisten" }
+  | { aktion: "zurueckholen" };
+
+/** Stand einer Karte, wie ihn die Prüfkarte braucht; Antwort von `GET /api/weine/[kennung]`. */
+export interface KartenAnsicht {
+  kennung: string;
+  stand: KartenStand;
+  /** Text aller nicht leeren Felder der Prüfkarte (= `pruefwerte`). */
+  werte: Partial<Record<PruefFeld, string>>;
+  herkunft: KartenHerkunft;
+}
+
+/** Antwort der Route `POST /api/weine/[kennung]/bearbeiten` bei Erfolg (200). */
+export interface BearbeitenAntwort extends KartenAnsicht {
+  /** Felder, die dieser Schritt nicht bestätigt hat, je mit Satz. */
+  nichtBestaetigt: { feld: PruefFeld; meldung: string }[];
+  /** Gesetzt, wenn der Stand in diesem Schritt von „geprueft“ auf „aufgenommen“ gefallen ist. */
+  zurueckgefallen?: { feld: PruefFeld };
 }
 
 /**

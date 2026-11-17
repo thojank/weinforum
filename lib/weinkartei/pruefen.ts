@@ -6,6 +6,7 @@ import {
   type KartenHerkunft,
   type LeseFeld,
   type Modellantwort,
+  type PruefFeld,
   type Unsicher,
   type Wein,
 } from "./types";
@@ -54,7 +55,11 @@ export const FLASCHE_MIN_ML = 50;
 export const FLASCHE_MAX_ML = 18000;
 export const EAN_LAENGEN: readonly number[] = [8, 12, 13];
 export const TEXT_MAX_ZEICHEN = 200;
-export const GRUND_MAX_ZEICHEN = 120;
+/** Höchstlänge eines Grundes unter `unsicher` beim Speichern, in Zeichen. */
+export const GRUND_MAX_ZEICHEN = 300;
+
+/** Auslassungszeichen am Ende eines gekürzten Textes. */
+const AUSLASSUNG = "…";
 
 /** Ersatz, wenn das Modell ein Feld als unsicher meldet, aber keinen Grund nennt. */
 export const GRUND_OHNE_ANGABE = "ohne Angabe des Grundes";
@@ -83,8 +88,8 @@ const ETIKETT_HERKUNFT = {
 // ---------------------------------------------------------------------------
 // Prüfen
 
-/** Ergebnis der Prüfung eines einzelnen Werts. */
-type Pruefung = { art: "gueltig"; wert: string } | { art: "leer" } | { art: "verworfen"; grund: string };
+/** Ergebnis der Prüfung eines einzelnen, schon bereinigten Werts. */
+export type Pruefung = { art: "gueltig"; wert: string } | { art: "leer" } | { art: "verworfen"; grund: string };
 
 const LEER: Pruefung = { art: "leer" };
 
@@ -97,41 +102,77 @@ function verworfen(grund: string): Pruefung {
 }
 
 /** Leerraum an den Rändern entfernen, Folgen von Leerraum zu einem Leerzeichen. */
-function leerraumBereinigen(text: string): string {
+export function leerraumBereinigen(text: string): string {
   return text.replace(/\s+/g, " ").trim();
 }
 
 /** Länge in Zeichen (nicht in UTF-16-Einheiten). */
-function zeichenzahl(text: string): number {
+export function zeichenzahl(text: string): number {
   return Array.from(text).length;
 }
 
-function kuerzen(text: string, max: number): string {
+/** Leerraum und Satzzeichen am Ende, die vor „…“ wegfallen. */
+const ENDE_OHNE_WORT = /[\s\p{P}]+$/u;
+
+/**
+ * Kürzt einen Text auf höchstens `max` Zeichen (nicht UTF-16-Einheiten). Kürzerer Text bleibt,
+ * wie er ist. Längerer Text wird an der letzten Wortgrenze vor der Grenze geschnitten, Leerraum und
+ * Satzzeichen am Ende fallen weg, dann folgt „…“. Ein einzelnes Wort, das länger ist als die
+ * Grenze, wird hart geschnitten, ebenfalls mit „…“. Für die Anzeige, z. B. `kurzerGrund(grund, 70)`.
+ */
+export function kurzerGrund(text: string, max: number): string {
   const zeichen = Array.from(text);
-  return zeichen.length > max ? zeichen.slice(0, max).join("") : text;
+  if (zeichen.length <= max) return text;
+  if (max < 1) return "";
+
+  // Platz für den Text vor dem Auslassungszeichen.
+  const platz = max - 1;
+  const kopf = zeichen.slice(0, platz);
+  // Steht direkt hinter dem Kopf Leerraum, endet dort ein Wort; sonst die letzte Lücke im Kopf.
+  let schnitt = /\s/.test(zeichen[platz] ?? "") ? platz : -1;
+  if (schnitt < 0) {
+    for (let i = kopf.length - 1; i > 0; i--) {
+      if (/\s/.test(kopf[i])) {
+        schnitt = i;
+        break;
+      }
+    }
+  }
+
+  const amWort = schnitt > 0 ? kopf.slice(0, schnitt).join("").replace(ENDE_OHNE_WORT, "") : "";
+  if (amWort !== "") return amWort + AUSLASSUNG;
+
+  // Keine brauchbare Wortgrenze: ein einzelnes, zu langes Wort wird hart geschnitten.
+  const hart = kopf.join("");
+  return (hart.replace(ENDE_OHNE_WORT, "") || hart) + AUSLASSUNG;
+}
+
+/** Kürzen beim Speichern, nach derselben Regel wie `kurzerGrund`. */
+function kuerzen(text: string, max: number): string {
+  return kurzerGrund(text, max);
 }
 
 function istLeseFeld(feld: string): feld is LeseFeld {
   return (LESE_FELDER as readonly string[]).includes(feld);
 }
 
-function pruefeText(wert: string): Pruefung {
+export function pruefeText(wert: string): Pruefung {
   return zeichenzahl(wert) > TEXT_MAX_ZEICHEN ? verworfen(GRUENDE.zuLang) : gueltig(wert);
 }
 
-function pruefeJahrgang(wert: string, jahr: number): Pruefung {
+export function pruefeJahrgang(wert: string, jahr: number): Pruefung {
   if (wert === JAHRGANG_OHNE) return gueltig(wert);
   if (!/^\d{4}$/.test(wert)) return verworfen(GRUENDE.jahrgang);
   const zahl = Number(wert);
   return zahl >= JAHRGANG_MIN && zahl <= jahr ? gueltig(wert) : verworfen(GRUENDE.jahrgang);
 }
 
-function pruefeArt(wert: string): Pruefung {
+export function pruefeArt(wert: string): Pruefung {
   return ART_WERTE.includes(wert) ? gueltig(wert) : verworfen(GRUENDE.art);
 }
 
 /** „12,5 % vol“ → `12.5`, „12.0“ → `12`. Nur eine Zahl von 0 bis 25. */
-function pruefeAlkohol(wert: string): Pruefung {
+export function pruefeAlkohol(wert: string): Pruefung {
   const roh = wert
     .replace(/vol\.?/gi, "")
     .replace(/%/g, "")
@@ -145,7 +186,7 @@ function pruefeAlkohol(wert: string): Pruefung {
 }
 
 /** Nur ganze Milliliter; Liter oder Zentiliter werden nicht umgerechnet, sondern verworfen. */
-function pruefeFlaschengroesse(wert: string): Pruefung {
+export function pruefeFlaschengroesse(wert: string): Pruefung {
   const roh = wert.replace(/ml/gi, "").replace(/\s+/g, "");
   if (!/^\d+$/.test(roh)) return verworfen(GRUENDE.flaschengroesse);
   const zahl = Number(roh);
@@ -165,7 +206,7 @@ function gs1PruefzifferStimmt(ziffern: string): boolean {
   return erwartet === Number(ziffern[ziffern.length - 1]);
 }
 
-function pruefeEan(wert: string): Pruefung {
+export function pruefeEan(wert: string): Pruefung {
   const roh = wert.replace(/\s+/g, "");
   if (!/^\d+$/.test(roh) || !EAN_LAENGEN.includes(roh.length)) {
     return verworfen(GRUENDE.eanUngueltig);
@@ -212,7 +253,7 @@ function pruefeFeld(
 
 /**
  * Meldungen des Modells unter „unsicher“: unbekannte Felder fallen weg, `grund` wird bereinigt
- * und auf 120 Zeichen gekürzt. Je Feld zählt nur die erste Meldung.
+ * und auf `GRUND_MAX_ZEICHEN` Zeichen gekürzt, an einer Wortgrenze mit „…“. Je Feld zählt nur die erste Meldung.
  */
 function modellMeldungen(roh: Modellantwort["unsicher"]): Map<LeseFeld, string> {
   const meldungen = new Map<LeseFeld, string>();
@@ -262,8 +303,11 @@ function alteHerkunft(karte: Wein): KartenHerkunft {
   };
 }
 
-/** Ob die Spalte einen Wert hat. `Name` mit `NAME_UNGELESEN` gilt als leer. */
-function hatWert(feld: LeseFeld, wert: string | undefined): boolean {
+/**
+ * Ob die Spalte einen Wert hat, gemessen am Rohtext aus Baserow (`pruefwerte` bzw. `lesewerte`).
+ * `Name` mit `NAME_UNGELESEN` gilt als leer. Die einzige Stelle, die das entscheidet.
+ */
+export function hatWert(feld: PruefFeld, wert: string | undefined): boolean {
   if (wert === undefined || wert.trim() === "") return false;
   return !(feld === "Name" && wert === NAME_UNGELESEN);
 }

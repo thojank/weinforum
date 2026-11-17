@@ -7,3 +7,4 @@
 - Keine echten Weindaten, Fotos, Kundendaten oder Zugangsdaten einchecken.
 - Klein bleiben: keine neue Abhängigkeit ohne Grund.
 - Nach jeder Änderung `npm run typecheck` und `npm run build`.
+- Arbeitspakete stehen als Briefing unter `docs/briefings/`. Vor dem Start das jeweilige Briefing ganz lesen.

@@ -4,7 +4,7 @@ export default function Startseite() {
   return (
     <>
       <h1>Weinkartei</h1>
-      <p className="hinweis">Aufnehmen geht. Lesen der Etiketten und Prüfen folgen.</p>
+      <p className="hinweis">Aufnehmen und Lesen gehen. Prüfen folgt.</p>
       <Link className="kachel" href="/aufnehmen">
         Wein aufnehmen
       </Link>

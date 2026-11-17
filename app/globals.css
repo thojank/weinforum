@@ -5,6 +5,9 @@
   --tinte: #241a1d;
   --grau: #6f6266;
   --linie: #e1d8da;
+  --weiss: #fff;
+  /* Fehler und gescheitertes Lesen */
+  --fehler: #a3261d;
   /* Schriften: Überschriften gesetzt, Fließtext noch offen */
   --schrift-titel: "Bricolage Grotesque Variable", system-ui, sans-serif;
   --schrift-text: system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -42,6 +45,22 @@ h1 {
   margin: 0 0 0.25rem;
 }
 
+h2 {
+  font-family: var(--schrift-titel);
+  font-weight: 700;
+  font-size: 1.15rem;
+  line-height: 1.2;
+  margin: 0;
+}
+
+h3 {
+  font-family: var(--schrift-titel);
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1.2;
+  margin: 0;
+}
+
 a.kachel {
   display: block;
   padding: 1.1rem 1rem;
@@ -51,7 +70,7 @@ a.kachel {
   font-family: var(--schrift-titel);
   font-weight: 700;
   background: var(--weinrot);
-  color: #fff;
+  color: var(--weiss);
 }
 
 a.kachel.zweitrangig {
@@ -85,7 +104,7 @@ a {
   padding: 0.7rem;
   border: 1.5px solid var(--linie);
   border-radius: 0.6rem;
-  background: #fff;
+  background: var(--weiss);
   width: 100%;
 }
 
@@ -98,11 +117,13 @@ a {
   border: 0;
   border-radius: 0.75rem;
   background: var(--weinrot);
-  color: #fff;
+  color: var(--weiss);
+  cursor: pointer;
 }
 
 .formular button:disabled {
   opacity: 0.5;
+  cursor: default;
 }
 
 .erfolg {
@@ -111,7 +132,7 @@ a {
 }
 
 .fehler {
-  color: #a3261d;
+  color: var(--fehler);
   font-weight: 600;
 }
 
@@ -124,7 +145,7 @@ a {
 .weinliste li {
   display: flex;
   gap: 0.75rem;
-  align-items: center;
+  align-items: flex-start;
   padding: 0.6rem 0;
   border-bottom: 1px solid var(--linie);
 }
@@ -137,4 +158,432 @@ a {
   border-radius: 0.4rem;
   object-fit: cover;
   background: var(--linie);
+}
+
+/* Nebenaktion, z. B. „Noch einmal lesen“: Rahmen in Weinrot.
+   Setzt alle Werte selbst, damit sie auch innerhalb von .formular gilt.
+   Abweichende Größe je Seite im eigenen Abschnitt, z. B. `.karte button.nochmal`. */
+button.nochmal {
+  font: inherit;
+  font-family: var(--schrift-titel);
+  font-weight: 700;
+  padding: 0.7rem 0.9rem;
+  margin: 0;
+  border: 1.5px solid var(--weinrot);
+  border-radius: 0.6rem;
+  background: transparent;
+  color: var(--weinrot);
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  button.nochmal:hover:not(:disabled) {
+    background: var(--weinrot);
+    color: var(--weiss);
+  }
+}
+
+button.nochmal:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* Rückmeldung auf Berühren und Drücken: Schaltflächen und Kacheln geben kurz nach.
+   `.uebersicht a` sind die Kacheln der Übersicht in „Alle Weine“; ihr übriges Aussehen
+   steht im Abschnitt der Liste. Wer dort `transition` setzt, nimmt `transform` mit auf. */
+.formular button,
+button.nochmal,
+a.kachel,
+.uebersicht a {
+  transition: transform 0.1s ease;
+}
+
+.formular button:active:not(:disabled),
+button.nochmal:active:not(:disabled),
+a.kachel:active {
+  transform: scale(0.985);
+}
+
+.uebersicht a:active {
+  transform: scale(0.97);
+}
+
+/* Alle Weine: Übersicht und Stapel */
+
+/* Übersicht: drei Kacheln, ein Tipp springt zum Stapel. Die Rückmeldung beim Drücken
+   steht oben bei den Schaltflächen; hier deshalb kein eigenes `transition`. */
+.uebersicht {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin: 0.9rem 0 0;
+}
+
+.uebersicht a,
+.uebersicht .leer {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0.6rem 0.7rem;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  background: var(--weiss);
+  border: 1.5px solid var(--linie);
+  border-top: 0.3rem solid var(--farbe);
+  color: var(--tinte);
+  font-size: 0.85rem;
+  line-height: 1.25;
+}
+
+.uebersicht b {
+  font-family: var(--schrift-titel);
+  font-weight: 800;
+  font-size: 1.6rem;
+  line-height: 1.1;
+  color: var(--farbe);
+}
+
+@media (hover: hover) {
+  .uebersicht a:hover {
+    border-color: var(--farbe);
+  }
+}
+
+/* Leerer Stapel: kein Ziel, also kein Link; die Kachel tritt zurück. */
+.uebersicht .leer {
+  color: var(--grau);
+}
+
+.uebersicht .leer b {
+  color: var(--grau);
+}
+
+.uebersicht .offen {
+  --farbe: var(--weinrot);
+}
+
+.uebersicht .unsicher {
+  --farbe: var(--herkunft-ki);
+}
+
+.uebersicht .gelesen {
+  --farbe: var(--herkunft-etikett);
+}
+
+/* Ein Abschnitt je Stapel; beim Sprung bleibt oben etwas Luft. */
+.stapel-abschnitt {
+  margin-top: 1.75rem;
+  scroll-margin-top: 1rem;
+}
+
+.stapel-abschnitt h2 {
+  margin-bottom: 0.4rem;
+}
+
+/* Stapel „Noch zu lesen“: je Karte ein Kästchen */
+.stapel {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.stapel > li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.6rem 0.9rem;
+  align-items: center;
+  padding: 0.8rem;
+  background: var(--weiss);
+  border: 1.5px solid var(--linie);
+  border-radius: 0.75rem;
+}
+
+.stapel .fotos {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.stapel .fotos img,
+.stapel .fotos .platzhalter {
+  display: block;
+  width: 40px;
+  height: 64px;
+  flex: none;
+  border-radius: 0.4rem;
+  object-fit: cover;
+  background: var(--linie);
+}
+
+.stapel .inhalt {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.stapel .meldung {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-weight: 600;
+}
+
+.stapel .meldung p {
+  margin: 0;
+}
+
+/* „unsicher: {Feld} – {Grund}“ unter der Meldung, eine Zeile je Eintrag */
+.stapel .unsicher-zeilen {
+  list-style: none;
+  padding: 0;
+  margin: 0.35rem 0 0;
+  color: var(--herkunft-ki);
+  font-size: 0.9rem;
+}
+
+.stapel button.nochmal {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+/* Stapel „Mit Unsicherem“ und „Gelesen“: Zeilen der .weinliste */
+.weinliste .text {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Gründe für Unsicheres, immer sichtbar */
+.gruende {
+  display: block;
+  margin-top: 0.35rem;
+  padding-left: 0.6rem;
+  border-left: 3px solid var(--herkunft-ki);
+  font-size: 0.9rem;
+}
+
+.gruende span {
+  display: block;
+}
+
+.gruende b {
+  color: var(--herkunft-ki);
+}
+
+/* Wein aufnehmen: Gerade aufgenommen */
+
+/* Jede Aufnahme der Sitzung als Karteikarte, die sich mit dem Gelesenen füllt.
+   Bewegung nur zwei Mal: ruhige Platzhalter beim Lesen, weicher Wechsel zum Ergebnis. */
+.gerade {
+  margin-top: 1.75rem;
+}
+
+.gerade .kopfzeile {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+}
+
+.gerade .karten {
+  list-style: none;
+  padding: 0;
+  margin: 0.6rem 0 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+/* Linker Rand zeigt den Stand: gelesen, liest, fehler, leer. */
+.karte {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.2rem 0.9rem;
+  align-items: start;
+  padding: 0.85rem;
+  background: var(--weiss);
+  border: 1.5px solid var(--linie);
+  border-left: 0.35rem solid var(--herkunft-etikett);
+  border-radius: 0.75rem;
+  transition: border-color 0.3s ease;
+}
+
+.karte.liest {
+  border-left-color: var(--linie);
+}
+
+.karte.fehler-karte {
+  border-left-color: var(--fehler);
+}
+
+.karte.leer {
+  border-left-color: var(--grau);
+}
+
+.karte .fotos {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.karte .fotos img {
+  display: block;
+  flex: none;
+  width: 40px;
+  height: 64px;
+  border-radius: 0.4rem;
+  object-fit: cover;
+  background: var(--linie);
+}
+
+.karte .inhalt {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.karte .inhalt p {
+  margin: 0;
+}
+
+.karte .titel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.5rem;
+}
+
+.karte .jahr {
+  font-family: var(--schrift-titel);
+  font-weight: 700;
+  color: var(--grau);
+}
+
+/* Unsicheres in der Überschrift und beim Erzeuger */
+.karte .name.unsicher,
+.karte .jahr.unsicher,
+.karte .erzeuger.unsicher {
+  color: var(--herkunft-ki);
+}
+
+.karte .inhalt .erzeuger {
+  margin-top: 0.1rem;
+}
+
+.karte .inhalt .fuss {
+  margin-top: 0.5rem;
+}
+
+/* Kleine Felder: Feldname über dem Wert */
+.karte .angaben {
+  list-style: none;
+  padding: 0;
+  margin: 0.55rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.karte .angaben li {
+  display: flex;
+  flex-direction: column;
+  padding: 0.2rem 0.55rem 0.25rem;
+  border: 1px solid var(--linie);
+  border-left: 3px solid var(--herkunft-etikett);
+  border-radius: 0.4rem;
+  background: var(--papier);
+  font-size: 0.9rem;
+  line-height: 1.25;
+}
+
+.karte .angaben .feld {
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--grau);
+}
+
+.karte .angaben li.unsicher {
+  border-style: dashed;
+  border-left-style: solid;
+  border-left-color: var(--herkunft-ki);
+}
+
+.karte .angaben li.unsicher .feld {
+  color: var(--herkunft-ki);
+  font-weight: 700;
+}
+
+/* „unsicher: {Feld} – {Grund}“, eine Zeile je Eintrag */
+.karte .unsicher-zeilen {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+  color: var(--herkunft-ki);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Kleinere Nebenaktion als die gemeinsame Grundform */
+.karte button.nochmal {
+  font-size: 0.9rem;
+  padding: 0.5rem 0.8rem;
+  margin-top: 0.6rem;
+}
+
+/* Platzhalter, solange gelesen wird: ruhiger Schimmer */
+.karte .gerippe span {
+  display: block;
+  height: 0.8rem;
+  margin-top: 0.5rem;
+  border-radius: 0.4rem;
+  background: linear-gradient(90deg, var(--linie) 25%, var(--papier) 50%, var(--linie) 75%);
+  background-size: 200% 100%;
+  animation: karte-schimmer 1.8s ease-in-out infinite;
+}
+
+.karte .gerippe span:nth-child(1) {
+  width: 70%;
+  height: 1rem;
+  margin-top: 0.35rem;
+}
+
+.karte .gerippe span:nth-child(2) {
+  width: 45%;
+}
+
+.karte .gerippe span:nth-child(3) {
+  width: 85%;
+}
+
+/* Weicher Wechsel vom Lesen zum Ergebnis; neue Karteikarten erscheinen ohne Einblendung. */
+.karte .inhalt.wechsel {
+  animation: karte-wechsel 0.35s ease both;
+}
+
+@keyframes karte-schimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes karte-wechsel {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Weniger Bewegung, wenn das Gerät darum bittet: schaltet alle Animationen und Übergänge ab.
+   Dank !important gilt das auch für Regeln, die weiter unten stehen. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }

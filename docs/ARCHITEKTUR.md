@@ -32,7 +32,13 @@
 - Zum Vergleich vorgesehen: `anthropic/claude-haiku-5.5`.
 - Jede Anfrage verlangt eine feste Antwortstruktur und setzt `provider.require_parameters` auf `true`, damit nur Anbieter antworten, die das können.
 
+## Schriften
+
+- Webschriften kommen als Pakete von Fontsource und werden mit der App ausgeliefert; kein Abruf bei Dritten.
+- Gesetzt: Bricolage Grotesque (variabel, 200–800) für Überschriften und Schaltflächen.
+- Fließtext vorerst Systemschrift, bis die übrigen Schriften feststehen.
+
 ## Noch offen
 
 - Echte Anmeldung je Person; bis dahin ein gemeinsamer Zugangscode (`proxy.ts`, `lib/zugang.ts`).
-- Schriften und Logo für die Vorlagen der Ausgaben.
+- Übrige Schriften und Logo für die Vorlagen der Ausgaben.

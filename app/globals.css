@@ -5,6 +5,9 @@
   --tinte: #241a1d;
   --grau: #6f6266;
   --linie: #e1d8da;
+  /* Schriften: Überschriften gesetzt, Fließtext noch offen */
+  --schrift-titel: "Bricolage Grotesque Variable", system-ui, sans-serif;
+  --schrift-text: system-ui, -apple-system, "Segoe UI", sans-serif;
   /* Herkunft einer Angabe, siehe docs/DATENMODELL.md */
   --herkunft-etikett: #2f6a78;
   --herkunft-ki: #9a5a12;
@@ -20,7 +23,7 @@ body {
   margin: 0;
   background: var(--papier);
   color: var(--tinte);
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: var(--schrift-text);
   font-size: 17px;
   line-height: 1.5;
 }
@@ -32,7 +35,10 @@ main {
 }
 
 h1 {
-  font-size: 1.6rem;
+  font-family: var(--schrift-titel);
+  font-weight: 800;
+  font-size: 1.8rem;
+  line-height: 1.15;
   margin: 0 0 0.25rem;
 }
 
@@ -42,7 +48,8 @@ a.kachel {
   margin-top: 0.75rem;
   border-radius: 0.75rem;
   text-decoration: none;
-  font-weight: 600;
+  font-family: var(--schrift-titel);
+  font-weight: 700;
   background: var(--weinrot);
   color: #fff;
 }
@@ -84,7 +91,8 @@ a {
 
 .formular button {
   font: inherit;
-  font-weight: 600;
+  font-family: var(--schrift-titel);
+  font-weight: 700;
   padding: 1rem;
   margin-top: 0.6rem;
   border: 0;

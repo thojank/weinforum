@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+// Webschriften kommen als Pakete von Fontsource und werden mit der App ausgeliefert.
+import "@fontsource-variable/bricolage-grotesque";
 import "./globals.css";
 
 export const metadata: Metadata = {

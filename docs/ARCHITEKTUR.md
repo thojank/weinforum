@@ -25,8 +25,14 @@
 - Stufe 3 Wissen: Verkostungsnotizen, Rückmeldungen, ähnliche Weine.
 - Stufe 4 Anbindung an Kasse und Bestandssystem.
 
+## Sprachmodell
+
+- Zugang über OpenRouter; Schlüssel in `OPENROUTER_API_KEY`, Modell in `MODELL_ID`.
+- Voreinstellung `google/gemini-3.1-flash-lite`: in einem öffentlichen Vergleich von 14 Modellen an 200 Bildern (28.09.2026) vorn bei der Texterkennung, rund 0,09 US-Cent je Bild. Nicht an echten Weinetiketten erprobt.
+- Zum Vergleich vorgesehen: `anthropic/claude-haiku-5.5`.
+- Jede Anfrage verlangt eine feste Antwortstruktur und setzt `provider.require_parameters` auf `true`, damit nur Anbieter antworten, die das können.
+
 ## Noch offen
 
-- Anbieter und Modell für das Lesen der Etiketten.
 - Anmeldung; bis dahin ein einfacher Zugangscode.
 - Schriften und Logo für die Vorlagen der Ausgaben.

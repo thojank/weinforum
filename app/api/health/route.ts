@@ -5,6 +5,7 @@ export function GET() {
   return NextResponse.json({
     ok: true,
     baserow: Boolean(process.env.BASEROW_TOKEN && process.env.BASEROW_TABLE_WEINE),
-    modell: Boolean(process.env.MODELL_API_KEY),
+    modell: Boolean(process.env.OPENROUTER_API_KEY),
+    modellId: process.env.MODELL_ID ?? null,
   });
 }

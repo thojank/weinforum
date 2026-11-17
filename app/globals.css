@@ -8,9 +8,9 @@
   --weiss: #fff;
   /* Fehler und gescheitertes Lesen */
   --fehler: #a3261d;
-  /* Schriften: Überschriften gesetzt, Fließtext noch offen */
+  /* Schriften: Überschriften in Bricolage Grotesque, Fließtext in Inter; beide von Fontsource */
   --schrift-titel: "Bricolage Grotesque Variable", system-ui, sans-serif;
-  --schrift-text: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --schrift-text: "Inter Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
   /* Herkunft einer Angabe, siehe docs/DATENMODELL.md */
   --herkunft-etikett: #2f6a78;
   --herkunft-ki: #9a5a12;
@@ -86,6 +86,12 @@ a.kachel.zweitrangig {
 
 a {
   color: var(--weinrot);
+}
+
+/* Deutlicher Fokus für die Bedienung mit Tastatur; Tippen und Klicken zeigen ihn nicht. */
+:focus-visible {
+  outline: 3px solid var(--herkunft-etikett);
+  outline-offset: 2px;
 }
 
 .formular {
@@ -190,17 +196,20 @@ button.nochmal:disabled {
 
 /* Rückmeldung auf Berühren und Drücken: Schaltflächen und Kacheln geben kurz nach.
    `.uebersicht a` sind die Kacheln der Übersicht in „Alle Weine“; ihr übriges Aussehen
-   steht im Abschnitt der Liste. Wer dort `transition` setzt, nimmt `transform` mit auf. */
+   steht im Abschnitt der Liste. Wer dort `transition` setzt, nimmt `transform` mit auf.
+   `.karte a.pruefen` ist „Karte prüfen“ unter „Gerade aufgenommen“. */
 .formular button,
 button.nochmal,
 a.kachel,
+.karte a.pruefen,
 .uebersicht a {
   transition: transform 0.1s ease;
 }
 
 .formular button:active:not(:disabled),
 button.nochmal:active:not(:disabled),
-a.kachel:active {
+a.kachel:active,
+.karte a.pruefen:active {
   transform: scale(0.985);
 }
 
@@ -527,6 +536,37 @@ a.kachel:active {
   font-size: 0.9rem;
   padding: 0.5rem 0.8rem;
   margin-top: 0.6rem;
+}
+
+/* „Noch einmal lesen“ und „Karte prüfen“ nebeneinander; wird es eng, rutscht der Verweis darunter. */
+.karte .aktionen {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 0.5rem;
+}
+
+/* „Karte prüfen“: Nebenaktion wie „Noch einmal lesen“, als Verweis mit Zielgröße für den Daumen */
+.karte a.pruefen {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 0.9rem;
+  margin-top: 0.6rem;
+  border: 1.5px solid var(--weinrot);
+  border-radius: 0.6rem;
+  font-family: var(--schrift-titel);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  color: var(--weinrot);
+}
+
+@media (hover: hover) {
+  .karte a.pruefen:hover {
+    background: var(--weinrot);
+    color: var(--weiss);
+  }
 }
 
 /* Platzhalter, solange gelesen wird: ruhiger Schimmer */

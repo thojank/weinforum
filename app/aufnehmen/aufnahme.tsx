@@ -77,6 +77,21 @@ function NochmalKnopf({ onLesen }: { onLesen: () => void }) {
   );
 }
 
+/**
+ * Aktionen unter einer fertig gelesenen Karteikarte: „Noch einmal lesen“, wo es bisher stand,
+ * und immer der Verweis zur Prüfkarte. Während des Lesens gibt es beides nicht.
+ */
+function Aktionen({ kennung, nochmal, onLesen }: { kennung: string; nochmal: boolean; onLesen: () => void }) {
+  return (
+    <div className="aktionen">
+      {nochmal ? <NochmalKnopf onLesen={onLesen} /> : null}
+      <Link className="pruefen" href={`/weine/${encodeURIComponent(kennung)}`}>
+        Karte prüfen
+      </Link>
+    </div>
+  );
+}
+
 /** „unsicher: {Feld} – {Grund}“, eine Zeile je Eintrag; ohne Einträge nichts. */
 function UnsicherZeilen({ unsicher }: { unsicher: Unsicher[] }) {
   if (unsicher.length === 0) return null;
@@ -91,7 +106,15 @@ function UnsicherZeilen({ unsicher }: { unsicher: Unsicher[] }) {
   );
 }
 
-function Gelesen({ stand, onLesen }: { stand: Extract<Lesestand, { art: "gelesen" }>; onLesen: () => void }) {
+function Gelesen({
+  stand,
+  kennung,
+  onLesen,
+}: {
+  stand: Extract<Lesestand, { art: "gelesen" }>;
+  kennung: string;
+  onLesen: () => void;
+}) {
   const { werte, unsicher } = stand;
   const istUnsicher = (feld: LeseFeld) => unsicher.some((eintrag) => eintrag.feld === feld);
   const fragezeichen = (feld: LeseFeld) => (istUnsicher(feld) ? " ?" : "");
@@ -146,12 +169,12 @@ function Gelesen({ stand, onLesen }: { stand: Extract<Lesestand, { art: "gelesen
         {stand.anzahl} {stand.anzahl === 1 ? "Angabe" : "Angaben"} vom Etikett
         {stand.rueckenfoto ? "" : " · nur Vorderetikett"}
       </p>
-      {name ? null : <NochmalKnopf onLesen={onLesen} />}
+      <Aktionen kennung={kennung} nochmal={!name} onLesen={onLesen} />
     </>
   );
 }
 
-function Inhalt({ stand, onLesen }: { stand: Lesestand; onLesen: () => void }) {
+function Inhalt({ stand, kennung, onLesen }: { stand: Lesestand; kennung: string; onLesen: () => void }) {
   switch (stand.art) {
     case "liest":
       return (
@@ -165,14 +188,14 @@ function Inhalt({ stand, onLesen }: { stand: Lesestand; onLesen: () => void }) {
         </>
       );
     case "gelesen":
-      return <Gelesen stand={stand} onLesen={onLesen} />;
+      return <Gelesen stand={stand} kennung={kennung} onLesen={onLesen} />;
     case "leer":
       return (
         <>
           <h3>Auf den Fotos war nichts zu lesen.</h3>
           <p className="hinweis erzeuger">Die Karte heißt weiter „{NAME_UNGELESEN}“.</p>
           <UnsicherZeilen unsicher={stand.unsicher} />
-          <NochmalKnopf onLesen={onLesen} />
+          <Aktionen kennung={kennung} nochmal onLesen={onLesen} />
         </>
       );
     case "fehler":
@@ -182,7 +205,7 @@ function Inhalt({ stand, onLesen }: { stand: Lesestand; onLesen: () => void }) {
             <h3 className="fehler">Lesen hat nicht geklappt.</h3>
             <p className="hinweis erzeuger">{stand.text}</p>
           </div>
-          <NochmalKnopf onLesen={onLesen} />
+          <Aktionen kennung={kennung} nochmal onLesen={onLesen} />
         </>
       );
   }
@@ -199,7 +222,7 @@ function Karte({ karte, onLesen }: { karte: Karteikarte; onLesen: () => void }) 
         {karte.hinten ? <img src={karte.hinten} alt="" width={40} height={64} /> : null}
       </div>
       <div className={wechsel} key={`${karte.lauf}-${karte.stand.art}`}>
-        <Inhalt stand={karte.stand} onLesen={onLesen} />
+        <Inhalt stand={karte.stand} kennung={karte.kennung} onLesen={onLesen} />
       </div>
     </li>
   );

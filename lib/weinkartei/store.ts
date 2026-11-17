@@ -1,5 +1,5 @@
 import "server-only";
-import type { Aufnahme, Wein } from "./types";
+import type { Aufnahme, KartenHerkunft, LeseFeld, Wein } from "./types";
 import { baserowStore } from "./baserow";
 
 /**
@@ -11,6 +11,14 @@ export interface WeinStore {
   liste(): Promise<Wein[]>;
   /** Legt aus den Fotos eine neue Karte mit Stand „aufgenommen“ an. */
   aufnehmen(aufnahme: Aufnahme): Promise<Wein>;
+  /** Eine Karte samt Adressen der beiden Fotos und Herkunft; null, wenn es die Kennung nicht gibt. */
+  holen(kennung: string): Promise<Wein | null>;
+  /** Schreibt gelesene Felder und die Herkunft. null leert eine Spalte. Rührt Stand und Fotos nicht an. */
+  aktualisieren(
+    kennung: string,
+    felder: Partial<Record<LeseFeld, string | null>>,
+    herkunft: KartenHerkunft,
+  ): Promise<void>;
 }
 
 /** Liefert null, solange die Datenbank nicht eingerichtet ist. */

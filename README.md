@@ -2,7 +2,14 @@
 
 Kleine Web-App für das Weinforum in Groß Lafferde: Weine per Foto erfassen, prüfen und danach überall verwenden – Weinliste, Monatsplakat, Preisschild, Beitrag.
 
-Stand: Zugangscode und Aufnehmen sind gebaut. Zwei Fotos am Handy legen eine Karte „aufgenommen“ in Baserow an. Das Lesen der Etiketten und die Prüfkarte fehlen noch.
+Stand: Zugangscode, Aufnehmen und Lesen sind gebaut.
+
+- Zwei Fotos am Handy legen eine Karte „aufgenommen“ in Baserow an.
+- Gleich danach liest ein Sprachmodell die Etiketten und trägt ein, was dort gedruckt steht. Unlesbares bleibt leer.
+- Unter „Gerade aufgenommen“ zeigt die Seite je Aufnahme eine Karteikarte mit dem Ergebnis.
+- „Alle Weine“ ordnet die Karten in drei Stapel: noch zu lesen, mit Unsicherem, gelesen. Karten ohne Namen lassen sich dort noch einmal lesen.
+- Das Lesen ist noch nicht an echten Etiketten erprobt.
+- Es fehlt noch die Prüfkarte zum Bearbeiten und Bestätigen (Paket 3).
 
 ## Einrichten
 
@@ -30,8 +37,9 @@ Vercel, Region Frankfurt (`vercel.json`). Repository mit Vercel verbinden und di
 
 ```
 app/                 Seiten und Server-Routen
-lib/weinkartei/      Typen und Datenschicht (Baserow dahinter)
-docs/                Architektur und Datenmodell
+lib/weinkartei/      Typen, Datenschicht (Baserow dahinter), Lesen und Prüfen
+docs/                Architektur, Datenmodell, Einrichten
+docs/briefings/      Aufträge der Arbeitspakete
 ```
 
 Mehr in [docs/ARCHITEKTUR.md](docs/ARCHITEKTUR.md).

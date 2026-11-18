@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="250" viewBox="0 0 1000 250">
+<title>Weinforum Groß-Lafferde – Logo</title>
+<style>@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;700&amp;display=swap');</style>
+
+<g transform="translate(10 10) scale(1.5333)">
+<path d="M58 46 L 50 16" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" fill="none"/>
+<path d="M60 44 C 62 20, 84 6, 108 8 C 104 32, 84 48, 60 44 Z" fill="#B9DC8F"/>
+<g fill="#FFFFFF"><circle cx="26" cy="64" r="16"/><circle cx="60" cy="64" r="16"/><circle cx="94" cy="64" r="16"/><circle cx="43" cy="96" r="16"/><circle cx="77" cy="96" r="16"/><circle cx="60" cy="128" r="16"/></g>
+</g>
+<text x="232" y="141" font-family="Outfit, sans-serif" font-weight="700" font-size="150" letter-spacing="-3" fill="#FFFFFF">Weinforum</text>
+<text x="236" y="222" font-family="Outfit, sans-serif" font-weight="500" font-size="40" letter-spacing="13.6" fill="#F3D9DF">GROSS-LAFFERDE</text>
+</svg>

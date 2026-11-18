@@ -73,9 +73,16 @@ Ab jetzt baut Vercel bei jedem Push auf `main` von selbst neu.
 
 - Zugangscode: In Vercel muss `APP_ZUGANGSCODE` gesetzt sein, sonst zeigt die Seite nur „Zugangscode ist nicht eingerichtet“. Wer die Adresse öffnet, wird nach dem Code gefragt; danach merkt sich der Browser ihn 90 Tage. Auf dem eigenen Rechner läuft die App auch ohne Code.
 - Die Spalten `Foto vorne` und `Foto hinten` müssen Dateifelder sein und genau so heißen; `Stand` muss ein Textfeld bleiben, sonst lässt sich kein Wein aufnehmen.
-- Die Spalte `Herkunft` muss es geben, als langes Textfeld. Fehlt sie oder eine der Spalten, die das Lesen füllt, meldet das Lesen einen Fehler mit dem Namen der Spalte. Das gilt für die Tabelle im Betrieb und ebenso für eine Tabelle zum Ausprobieren („Weine QA“).
+- Die Spalte `Herkunft` muss es geben, als langes Textfeld. Fehlt sie oder eine der Spalten, die das Lesen füllt, melden das Lesen und die Prüfkarte einen Fehler mit dem Namen der Spalte. Das gilt für die Tabelle im Betrieb und ebenso für eine Tabelle zum Ausprobieren („Weine QA“).
+- **Für die Prüfkarte** müssen außerdem die Spalten `Preis Flasche`, `Preis Glas`, `Kurztext kurz` und `Stand` vorhanden sein, genau so benannt: `Preis Flasche`, `Preis Glas` und `Stand` als Text, `Kurztext kurz` als Text oder langer Text. Tabellen aus `docs/weine-vorlage.csv` haben sie schon; bei einer älteren oder von Hand angelegten Tabelle in Baserow nachsehen. Fehlt eine davon:
+  - Die Karte lässt sich trotzdem öffnen und lesen; ein fehlendes Preis- oder Kurztextfeld erscheint leer.
+  - Erst ein Schritt, der in diese Spalte schreibt, scheitert mit „Die Spalte „…“ fehlt in Baserow.“, zum Beispiel „Die Spalte „Preis Glas“ fehlt in Baserow.“ Es wird dann nichts geschrieben, auch nichts halb.
+  - Fehlt `Stand`, gilt jede Karte als „aufgenommen“, und jeder Schritt, der den Stand ändert („Karte ist geprüft“, „Auslisten“), scheitert mit „Die Spalte „Stand“ fehlt in Baserow.“
+- Neue Umgebungsvariablen braucht die Prüfkarte nicht.
 - Fehlt `OPENROUTER_API_KEY` oder `MODELL_ID`, meldet das Lesen, dass es nicht eingerichtet ist, und nennt die fehlende Einstellung, zum Beispiel „Das Lesen ist nicht eingerichtet (OPENROUTER_API_KEY fehlt).“ Das Aufnehmen funktioniert trotzdem weiter; die Karten heißen dann „(noch nicht gelesen)“ und lassen sich später in „Alle Weine“ mit „Noch einmal lesen“ lesen.
 - Die Spalten kommen beim Import als Text an und bleiben Text. Nicht auf Auswahl oder Zahl umstellen: Die App schreibt beim Lesen Text hinein. Welche Werte erlaubt sind, prüft die App selbst (siehe `docs/DATENMODELL.md`).
-- `Herkunft` nur ändern, wenn man die Form aus `docs/DATENMODELL.md` genau einhält. Ungültiger Text dort sperrt das Lesen dieser Karte.
-- Die Beispielzeile kann gelöscht werden, sobald die Probe geklappt hat. Lesen lässt sie sich nicht, weil ihre Kennung nicht die Form der App hat.
-- Das Lesen ist noch nicht an echten Etiketten erprobt. Beim ersten Einsatz die gelesenen Angaben mit den Etiketten vergleichen.
+- `Herkunft` nur ändern, wenn man die Form aus `docs/DATENMODELL.md` genau einhält. Ungültiger Text dort sperrt das Lesen und das Bearbeiten dieser Karte.
+- Gelesene Werte am besten auf der Prüfkarte berichtigen, nicht direkt in Baserow: Nur dort wird die Berichtigung als bestätigt vermerkt und beim nächsten Lesen nicht überschrieben.
+- Die Beispielzeile kann gelöscht werden, sobald die Probe geklappt hat. Lesen lässt sie sich nicht, und sie hat keine Prüfkarte, weil ihre Kennung nicht die Form der App hat.
+- Das Lesen ist am 17.11.2026 gegen echte Dienste gelaufen, aber noch nicht an vielen echten Weinetiketten erprobt. Die gelesenen Angaben deshalb auf der Prüfkarte mit den Fotos vergleichen; dafür ist sie da.
+- Die Prüfkarte ist bisher nur gegen eine nachgebildete Baserow erprobt. Beim ersten Einsatz eine Karte prüfen und danach in Baserow nachsehen, ob `Stand` und `Herkunft` stimmen.
